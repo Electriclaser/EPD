@@ -18,25 +18,44 @@
 package com.watabou.pixeldungeon.actors.buffs;
 
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
+import com.watabou.utils.Bundle;
 
-public class Slow extends FlavourBuff {
+public class Terror extends FlavourBuff {
 
-	private static final float DURATION = 10f;
-
+	public static final float DURATION = 10f;
+	
+	public int object = 0;
+	
+	private static final String OBJECT	= "object";
+	
+	@Override
+	public void storeInBundle( Bundle bundle ) {
+		super.storeInBundle( bundle );
+		bundle.put( OBJECT, object );
+		
+	}
+	
+	@Override
+	public void restoreFromBundle( Bundle bundle ) {
+		super.restoreFromBundle( bundle );
+		object = bundle.getInt( OBJECT );
+	}
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.TERROR;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Terror";
 	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	
+	public static void recover( Char target ) {
+		Terror terror = target.buff( Terror.class );
+		if (terror != null && terror.cooldown() < DURATION) {
+			target.remove( terror );
+		}
 	}
 }

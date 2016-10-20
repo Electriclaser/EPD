@@ -17,26 +17,39 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
+import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Levitation extends FlavourBuff {
 
-	private static final float DURATION = 10f;
-
+	public static final float DURATION	= 20f;
+	
+	@Override
+	public boolean attachTo( Char target ) {
+		if (super.attachTo( target )) {
+			target.flying = true;
+			Roots.detach( target, Roots.class );
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public void detach() {
+		target.flying = false;
+		Dungeon.level.press( target.pos, target );
+		super.detach();
+	}
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.LEVITATION;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
-	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+		return "Levitating";
 	}
 }

@@ -17,18 +17,14 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.Badges;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.Dungeon;
-import com.watabou.pixeldungeon.ResultDescriptions;
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.actors.hero.Hero;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
-import com.watabou.pixeldungeon.utils.GLog;
-import com.watabou.pixeldungeon.utils.Utils;
 import com.watabou.utils.Bundle;
 
-public class Poison extends Buff implements Hero.Doom {
+public class Shadows extends Invisibility {
 	
 	protected float left;
 	
@@ -47,28 +43,30 @@ public class Poison extends Buff implements Hero.Doom {
 		left = bundle.getFloat( LEFT );
 	}
 	
-	public void set( float duration ) {
-		this.left = duration;
-	};
-	
 	@Override
-	public int icon() {
-		return BuffIndicator.POISON;
+	public boolean attachTo( Char target ) {
+		if (super.attachTo( target )) {
+			Sample.INSTANCE.play( Assets.SND_MELD );
+			Dungeon.observe();
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	@Override
-	public String toString() {
-		return "Poisoned";
+	public void detach() {
+		super.detach();
+		Dungeon.observe();
 	}
 	
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			target.damage( (int)(left / 3) + 1, this );
-			spend( TICK );
+			spend( TICK * 2 );
 			
-			if ((left -= TICK) <= 0) {
+			if (--left <= 0 || Dungeon.hero.visibleEnemies() > 0) {
 				detach();
 			}
 			
@@ -80,17 +78,19 @@ public class Poison extends Buff implements Hero.Doom {
 
 		return true;
 	}
-
-	public static float durationFactor( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() : 1;
+	
+	public void prolong() {
+		left = 2;
 	}
-
+	
 	@Override
-	public void onDeath() {
-		Badges.validateDeathFromPoison();
-		
-		Dungeon.fail( Utils.format( ResultDescriptions.POISON, Dungeon.depth ) );
-		GLog.n( "You died from poison..." );
+	public int icon() {
+		return BuffIndicator.SHADOWS;
 	}
+	
+	@Override
+	public String toString() {
+		return "Shadowmelded";
+	}
+	
 }

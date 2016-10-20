@@ -17,58 +17,68 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.ResultDescriptions;
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.actors.hero.Hero;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
+import com.watabou.pixeldungeon.effects.Splash;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 import com.watabou.pixeldungeon.utils.GLog;
 import com.watabou.pixeldungeon.utils.Utils;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PointF;
+import com.watabou.utils.Random;
 
-public class Poison extends Buff implements Hero.Doom {
+public class Bleeding extends Buff {
 	
-	protected float left;
+	protected int level;
 	
-	private static final String LEFT	= "left";
+	private static final String LEVEL	= "level";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		bundle.put( LEVEL, level );
 		
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		left = bundle.getFloat( LEFT );
+		level = bundle.getInt( LEVEL );
 	}
 	
-	public void set( float duration ) {
-		this.left = duration;
+	public void set( int level ) {
+		this.level = level;
 	};
 	
 	@Override
 	public int icon() {
-		return BuffIndicator.POISON;
+		return BuffIndicator.BLEEDING;
 	}
 	
 	@Override
 	public String toString() {
-		return "Poisoned";
+		return "Bleeding";
 	}
 	
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			target.damage( (int)(left / 3) + 1, this );
-			spend( TICK );
-			
-			if ((left -= TICK) <= 0) {
+			if ((level = Random.Int( level / 2, level )) > 0) {
+				
+				target.damage( level, this );
+				if (target.sprite.visible) {
+					Splash.at( target.sprite.center(), -PointF.PI / 2, PointF.PI / 6, 
+							target.sprite.blood(), Math.min( 10 * level / target.HT, 10 ) );
+				}
+				
+				if (target == Dungeon.hero && !target.isAlive()) {
+					Dungeon.fail( Utils.format( ResultDescriptions.BLEEDING, Dungeon.depth ) );
+					GLog.n( "You bled to death..." );
+				}
+				
+				spend( TICK );
+			} else {
 				detach();
 			}
 			
@@ -77,20 +87,7 @@ public class Poison extends Buff implements Hero.Doom {
 			detach();
 			
 		}
-
-		return true;
-	}
-
-	public static float durationFactor( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() : 1;
-	}
-
-	@Override
-	public void onDeath() {
-		Badges.validateDeathFromPoison();
 		
-		Dungeon.fail( Utils.format( ResultDescriptions.POISON, Dungeon.depth ) );
-		GLog.n( "You died from poison..." );
+		return true;
 	}
 }

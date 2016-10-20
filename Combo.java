@@ -17,26 +17,51 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
+import com.watabou.pixeldungeon.Badges;
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
+import com.watabou.pixeldungeon.utils.GLog;
 
-public class Slow extends FlavourBuff {
-
-	private static final float DURATION = 10f;
-
+public class Combo extends Buff {
+	
+	private static String TXT_COMBO = "%d hit combo!";
+	
+	public int count = 0;
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.COMBO;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Combo";
 	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	
+	public int hit( Char enemy, int damage ) {
+		
+		count++;
+		
+		if (count >= 3) {
+			
+			Badges.validateMasteryCombo( count );
+			
+			GLog.p( TXT_COMBO, count );
+			postpone( 1.41f - count / 10f );
+			return (int)(damage * (count - 2) / 5f);
+			
+		} else {
+			
+			postpone( 1.1f );
+			return 0;
+			
+		}
 	}
+	
+	@Override
+	public boolean act() {
+		detach();
+		return true;
+	}
+	
 }

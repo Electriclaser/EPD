@@ -17,26 +17,29 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
+import java.util.HashSet;
+
+import com.watabou.pixeldungeon.actors.blobs.ToxicGas;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
-
-	private static final float DURATION = 10f;
-
+public class GasesImmunity extends FlavourBuff {
+	
+	public static final float DURATION	= 5f;
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.IMMUNITY;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Immune to gases";
 	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	
+	public static final HashSet<Class<?>> IMMUNITIES = new HashSet<Class<?>>();
+	static {
+		IMMUNITIES.add( Paralysis.class );
+		IMMUNITIES.add( ToxicGas.class );
+		IMMUNITIES.add( Vertigo.class );
 	}
 }

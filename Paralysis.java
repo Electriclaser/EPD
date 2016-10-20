@@ -15,33 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.watabou.pixeldungeon.items.weapon.enchantments;
+package com.watabou.pixeldungeon.actors.buffs;
 
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.actors.buffs.Buff;
-import com.watabou.pixeldungeon.items.weapon.Weapon;
-import com.watabou.pixeldungeon.sprites.ItemSprite;
-import com.watabou.pixeldungeon.sprites.ItemSprite.Glowing;
-import com.watabou.utils.Random;
+import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
+import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Paralysis extends Weapon.Enchantment {
+public class Paralysis extends FlavourBuff {
 
-	private static final String TXT_STUNNING = "stunning %s";
-	
-	private static ItemSprite.Glowing YELLOW = new ItemSprite.Glowing( 0xCCAA44 );
+	private static final float DURATION	= 10f;
 	
 	@Override
-	public boolean proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		// lvl 0 - 13%
-		// lvl 1 - 22%
-		// lvl 2 - 30%
-		int level = Math.max( 0, weapon.effectiveLevel() );
-		
-		if (Random.Int( level + 8 ) >= 7) {
-			
-			Buff.prolong( defender, com.watabou.pixeldungeon.actors.buffs.Paralysis.class, 
-				Random.Float( 1, 1.5f + level ) );
-			
+	public boolean attachTo( Char target ) {
+		if (super.attachTo( target )) {
+			target.paralysed = true;
 			return true;
 		} else {
 			return false;
@@ -49,13 +36,31 @@ public class Paralysis extends Weapon.Enchantment {
 	}
 	
 	@Override
-	public Glowing glowing() {
-		return YELLOW;
+	public void detach() {
+		super.detach();
+		unfreeze( target );
 	}
 	
 	@Override
-	public String name( String weaponName) {
-		return String.format( TXT_STUNNING, weaponName );
+	public int icon() {
+		return BuffIndicator.PARALYSIS;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Paralysed";
+	}
+	
+	public static float duration( Char ch ) {
+		Resistance r = ch.buff( Resistance.class );
+		return r != null ? r.durationFactor() * DURATION : DURATION;
+	}
+	
+	public static void unfreeze( Char ch ) {
+		if (ch.buff( Paralysis.class ) == null &&
+			ch.buff( Frost.class ) == null) {
+			
+			ch.paralysed = false;
+		}
+	}
 }

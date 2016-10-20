@@ -15,56 +15,99 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.watabou.pixeldungeon.items.weapon.enchantments;
+package com.watabou.pixeldungeon.actors.blobs;
 
+import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.actors.Actor;
 import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.actors.buffs.Buff;
 import com.watabou.pixeldungeon.actors.buffs.Burning;
+import com.watabou.pixeldungeon.effects.BlobEmitter;
 import com.watabou.pixeldungeon.effects.particles.FlameParticle;
-import com.watabou.pixeldungeon.items.weapon.Weapon;
-import com.watabou.pixeldungeon.sprites.ItemSprite;
-import com.watabou.pixeldungeon.sprites.ItemSprite.Glowing;
-import com.watabou.utils.Random;
+import com.watabou.pixeldungeon.items.Heap;
+import com.watabou.pixeldungeon.levels.Level;
+import com.watabou.pixeldungeon.scenes.GameScene;
 
-public class Fire extends Weapon.Enchantment {
-
-	private static final String TXT_BLAZING	= "blazing %s";
-	
-	private static ItemSprite.Glowing ORANGE = new ItemSprite.Glowing( 0xFF4400 );
+public class Fire extends Blob {
 	
 	@Override
-	public boolean proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		// lvl 0 - 33%
-		// lvl 1 - 50%
-		// lvl 2 - 60%
-		int level = Math.max( 0, weapon.effectiveLevel() );
+	protected void evolve() {
+
+		boolean[] flamable = Level.flamable;
 		
-		if (Random.Int( level + 3 ) >= 2) {
+		int from = WIDTH + 1;
+		int to = Level.LENGTH - WIDTH - 1;
+		
+		boolean observe = false;
+		
+		for (int pos=from; pos < to; pos++) {
 			
-			if (Random.Int( 2 ) == 0) {
-				Buff.affect( defender, Burning.class ).reignite( defender );
+			int fire;
+			
+			if (cur[pos] > 0) {
+				
+				burn( pos );
+				
+				fire = cur[pos] - 1;
+				if (fire <= 0 && flamable[pos]) {
+					
+					int oldTile = Dungeon.level.map[pos];
+					Dungeon.level.destroy( pos );
+					
+					observe = true;
+					GameScene.updateMap( pos );
+					if (Dungeon.visible[pos]) {
+						GameScene.discoverTile( pos, oldTile );
+					}
+				}
+				
+			} else {
+				
+				if (flamable[pos] && (cur[pos-1] > 0 || cur[pos+1] > 0 || cur[pos-WIDTH] > 0 || cur[pos+WIDTH] > 0)) {
+					fire = 4;
+					burn( pos );
+				} else {
+					fire = 0;
+				}
+
 			}
-			defender.damage( Random.Int( 1, level + 2 ), this );
 			
-			defender.sprite.emitter().burst( FlameParticle.FACTORY, level + 1 );
-			
-			return true;
-			
-		} else {
-			
-			return false;
-			
+			volume += (off[pos] = fire);
+
+		}
+		
+		if (observe) {
+			Dungeon.observe();
+		}
+	}
+	
+	private void burn( int pos ) {
+		Char ch = Actor.findChar( pos );
+		if (ch != null) {
+			Buff.affect( ch, Burning.class ).reignite( ch );
+		}
+		
+		Heap heap = Dungeon.level.heaps.get( pos );
+		if (heap != null) {
+			heap.burn();
+		}
+	}
+	
+	public void seed( int cell, int amount ) {
+		if (cur[cell] == 0) {
+			volume += amount;
+			cur[cell] = amount;
 		}
 	}
 	
 	@Override
-	public Glowing glowing() {
-		return ORANGE;
+	public void use( BlobEmitter emitter ) {
+		super.use( emitter );
+		emitter.start( FlameParticle.FACTORY, 0.03f, 0 );
 	}
 	
 	@Override
-	public String name( String weaponName ) {
-		return String.format( TXT_BLAZING, weaponName );
+	public String tileDesc() {
+		return "A fire is raging here.";
 	}
-
 }

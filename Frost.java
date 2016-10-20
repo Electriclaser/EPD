@@ -17,24 +17,61 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
+import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.actors.Char;
+import com.watabou.pixeldungeon.actors.hero.Hero;
+import com.watabou.pixeldungeon.items.Item;
+import com.watabou.pixeldungeon.items.food.FrozenCarpaccio;
+import com.watabou.pixeldungeon.items.food.MysteryMeat;
 import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Frost extends FlavourBuff {
 
-	private static final float DURATION = 10f;
+	private static final float DURATION	= 5f;
+	
+	@Override
+	public boolean attachTo( Char target ) {
+		if (super.attachTo( target )) {
+			
+			target.paralysed = true;
+			Burning.detach( target, Burning.class );
+			
+			if (target instanceof Hero) {
+				Hero hero = (Hero)target;
+				Item item = hero.belongings.randomUnequipped();
+				if (item instanceof MysteryMeat) {
+					
+					item = item.detach( hero.belongings.backpack );
+					FrozenCarpaccio carpaccio = new FrozenCarpaccio(); 
+					if (!carpaccio.collect( hero.belongings.backpack )) {
+						Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();
+					}
+				}
+			}
 
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public void detach() {
+		super.detach();
+		Paralysis.unfreeze( target );
+	}
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.FROST;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Frozen";
 	}
-
+	
 	public static float duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;

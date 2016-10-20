@@ -17,26 +17,47 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Barkskin extends Buff {
 
-	private static final float DURATION = 10f;
+	private int level = 0;
+	
+	@Override
+	public boolean act() {
+		if (target.isAlive()) {
 
+			spend( TICK );
+			if (--level <= 0) {
+				detach();
+			}
+			
+		} else {
+			
+			detach();
+			
+		}
+
+		return true;
+	}
+	
+	public int level() {
+		return level;
+	}
+	
+	public void level( int value ) {
+		if (level < value) {
+			level = value;
+		}
+	}
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.BARKSKIN;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
-	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+		return "Barkskin";
 	}
 }

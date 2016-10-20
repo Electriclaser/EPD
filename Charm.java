@@ -17,80 +17,42 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.Badges;
-import com.watabou.pixeldungeon.Dungeon;
-import com.watabou.pixeldungeon.ResultDescriptions;
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.actors.hero.Hero;
 import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
-import com.watabou.pixeldungeon.utils.GLog;
-import com.watabou.pixeldungeon.utils.Utils;
 import com.watabou.utils.Bundle;
 
-public class Poison extends Buff implements Hero.Doom {
+public class Charm extends FlavourBuff {
 	
-	protected float left;
+	public int object = 0;
 	
-	private static final String LEFT	= "left";
+	private static final String OBJECT	= "object";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		bundle.put( OBJECT, object );
 		
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		left = bundle.getFloat( LEFT );
+		object = bundle.getInt( OBJECT );
 	}
-	
-	public void set( float duration ) {
-		this.left = duration;
-	};
 	
 	@Override
 	public int icon() {
-		return BuffIndicator.POISON;
+		return BuffIndicator.HEART;
 	}
 	
 	@Override
 	public String toString() {
-		return "Poisoned";
+		return "Charmed";
 	}
 	
-	@Override
-	public boolean act() {
-		if (target.isAlive()) {
-			
-			target.damage( (int)(left / 3) + 1, this );
-			spend( TICK );
-			
-			if ((left -= TICK) <= 0) {
-				detach();
-			}
-			
-		} else {
-			
-			detach();
-			
-		}
-
-		return true;
-	}
-
 	public static float durationFactor( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() : 1;
-	}
-
-	@Override
-	public void onDeath() {
-		Badges.validateDeathFromPoison();
-		
-		Dungeon.fail( Utils.format( ResultDescriptions.POISON, Dungeon.depth ) );
-		GLog.n( "You died from poison..." );
 	}
 }

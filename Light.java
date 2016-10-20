@@ -17,26 +17,42 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
+import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Light extends FlavourBuff {
 
-	private static final float DURATION = 10f;
-
+	public static final float DURATION	= 250f;
+	public static final int DISTANCE	= 4;
+	
+	@Override
+	public boolean attachTo( Char target ) {
+		if (super.attachTo( target )) {
+			if (Dungeon.level != null) {
+				target.viewDistance = Math.max( Dungeon.level.viewDistance, DISTANCE );
+				Dungeon.observe();
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public void detach() {
+		target.viewDistance = Dungeon.level.viewDistance;
+		Dungeon.observe();
+		super.detach();
+	}
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.LIGHT;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
-	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+		return "Illuminated";
 	}
 }

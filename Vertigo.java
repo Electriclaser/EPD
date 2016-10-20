@@ -21,20 +21,20 @@ import com.watabou.pixeldungeon.actors.Char;
 import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
-
-	private static final float DURATION = 10f;
-
+public class Vertigo extends FlavourBuff {
+	
+	public static final float DURATION	= 10f;
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.VERTIGO;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Vertigo";
 	}
-
+	
 	public static float duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;

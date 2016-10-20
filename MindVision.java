@@ -17,26 +17,28 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
+import com.watabou.pixeldungeon.Dungeon;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class MindVision extends FlavourBuff {
 
-	private static final float DURATION = 10f;
-
+	public static final float DURATION = 20f;
+	
+	public int distance = 2;
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.MIND_VISION;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Mind vision";
 	}
 
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	@Override
+	public void detach() {
+		super.detach();
+		Dungeon.observe();
 	}
 }

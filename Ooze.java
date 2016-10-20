@@ -17,26 +17,42 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
+import com.watabou.pixeldungeon.Dungeon;
+import com.watabou.pixeldungeon.ResultDescriptions;
+import com.watabou.pixeldungeon.levels.Level;
 import com.watabou.pixeldungeon.ui.BuffIndicator;
+import com.watabou.pixeldungeon.utils.GLog;
+import com.watabou.pixeldungeon.utils.Utils;
 
-public class Slow extends FlavourBuff {
-
-	private static final float DURATION = 10f;
-
+public class Ooze extends Buff {
+	
+	private static final String TXT_HERO_KILLED = "%s killed you...";
+	
+	public int damage	= 1;
+	
 	@Override
 	public int icon() {
-		return BuffIndicator.SLOW;
+		return BuffIndicator.OOZE;
 	}
 	
 	@Override
 	public String toString() {
-		return "Slowed";
+		return "Caustic ooze";
 	}
-
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	
+	@Override
+	public boolean act() {
+		if (target.isAlive()) {
+			target.damage( damage, this );
+			if (!target.isAlive() && target == Dungeon.hero) {
+				Dungeon.fail( Utils.format( ResultDescriptions.OOZE, Dungeon.depth ) );
+				GLog.n( TXT_HERO_KILLED, toString() );
+			}
+			spend( TICK );
+		}
+		if (Level.water[target.pos]) {
+			detach();
+		}
+		return true;
 	}
 }

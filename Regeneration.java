@@ -17,26 +17,34 @@
  */
 package com.watabou.pixeldungeon.actors.buffs;
 
-import com.watabou.pixeldungeon.actors.Char;
-import com.watabou.pixeldungeon.items.rings.RingOfElements.Resistance;
-import com.watabou.pixeldungeon.ui.BuffIndicator;
+import com.watabou.pixeldungeon.actors.hero.Hero;
+import com.watabou.pixeldungeon.items.rings.RingOfMending;
 
-public class Slow extends FlavourBuff {
-
-	private static final float DURATION = 10f;
-
-	@Override
-	public int icon() {
-		return BuffIndicator.SLOW;
-	}
+public class Regeneration extends Buff {
+	
+	private static final float REGENERATION_DELAY = 10;
 	
 	@Override
-	public String toString() {
-		return "Slowed";
-	}
+	public boolean act() {
+		if (target.isAlive()) {
 
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+			if (target.HP < target.HT && !((Hero)target).isStarving()) {
+				target.HP += 1;
+			}
+			
+			int bonus = 0;
+			for (Buff buff : target.buffs( RingOfMending.Rejuvenation.class )) {
+				bonus += ((RingOfMending.Rejuvenation)buff).level;
+			}
+			
+			spend( (float)(REGENERATION_DELAY / Math.pow( 1.2, bonus )) );
+			
+		} else {
+			
+			diactivate();
+			
+		}
+
+		return true;
 	}
 }
