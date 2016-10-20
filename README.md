@@ -1,4 +1,4 @@
-origional is - Pixel Dungeon
+original is - Pixel Dungeon
 =============
 
 Traditional roguelike game with pixel-art graphics and simple interface.
