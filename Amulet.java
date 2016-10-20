@@ -33,7 +33,7 @@ public class Amulet extends Item {
 	private static final String AC_END = "END THE GAME";
 	
 	{
-		name = "Amulet of Yendor";
+		name = "Amulet of Elements";
 		image = ItemSpriteSheet.AMULET;
 		
 		unique = true;
@@ -92,13 +92,13 @@ public class Amulet extends Item {
 	
 	@Override
 	public boolean isUpgradable() {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public String info() {
 		return 
-			"The Amulet of Yendor is the least powerful known artifact of known origin. It is said that the amulet " +
-			"is unable to fulfil any wish if its owner's will-power is weak enough to \"persuade\" it to do it.";
+			"The Amulet of Elements is the most powerful known artifact of unknown origin. It is said that the amulet " +
+			"is able to fulfil any wish if its owner's will-power is strong enough to \"control\" it without destroying their mind.";
 	}
 }
