@@ -183,8 +183,7 @@ public class CavesLevel extends RegularLevel {
 	}
 	
 	@Override
-	public String tileName( int tile ) {
-		switch (tile) {
+	public String tileName( int tile ) {		switch (tile) {
 		case Terrain.GRASS:
 			return "Fluorescent moss";
 		case Terrain.HIGH_GRASS:
@@ -200,15 +199,15 @@ public class CavesLevel extends RegularLevel {
 	public String tileDesc( int tile ) {
 		switch (tile) {
 		case Terrain.ENTRANCE:
-			return "The ladder leads up to the upper depth.";
+			return "The ladder leads up to a slightly less dangerous part of the dungeon.";
 		case Terrain.EXIT:
-			return "The ladder leads down to the lower depth.";
+			return "The ladder leads down to the a more treacherous depth.";
 		case Terrain.HIGH_GRASS:
 			return "Huge mushrooms block the view.";
 		case Terrain.WALL_DECO:
 			return "A vein of some ore is visible on the wall. Gold?";
 		case Terrain.BOOKSHELF:
-			return "Who would need a bookshelf in a cave?";
+			return "why would anyone need a bookshelf down here...?";
 		default:
 			return super.tileDesc( tile );
 		}
