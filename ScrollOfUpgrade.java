@@ -27,7 +27,7 @@ import com.watabou.pixeldungeon.windows.WndBag;
 
 public class ScrollOfUpgrade extends InventoryScroll {
 
-	private static final String TXT_LOOKS_BETTER	= "your %s certainly looks better now";
+	private static final String TXT_LOOKS_BETTER	= "your %s is filled with additional power";
 	
 	{
 		name = "Scroll of Upgrade";
