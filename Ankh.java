@@ -40,7 +40,7 @@ public class Ankh extends Item {
 	@Override
 	public String info() {
 		return 
-			"The ancient symbol of life grants an ability to escape the world of the dead upon death. " +
+			"The ancient symbol of life grants an ability to escape the world of the dead if death occurs. " +
 			"Upon resurrection all non-equipped items are lost.";
 	}
 	
