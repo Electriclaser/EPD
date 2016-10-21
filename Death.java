@@ -34,9 +34,22 @@ public class Death extends Weapon.Enchantment {
 	
 	@Override
 	public boolean proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		// lvl 0 - 8%
-		// lvl 1 ~ 9%
-		// lvl 2 ~ 10%
+		// lvl 0 - 10%
+		// lvl 1 ~ 12%
+		// lvl 2 ~ 14%
+		// lvl 3 ~ 16%
+		// lvl 4 ~ 18%
+		// lvl 5 ~ 20%
+		// lvl 6 ~ 22%
+		// lvl 7 ~ 24%
+		// lvl 8 ~ 26%
+		// lvl 9 ~ 28%
+		// lvl 10 ~ 30%
+		// lvl 11 ~ 34%
+		// lvl 12 ~ 38%
+		// lvl 13 ~ 42%
+		// lvl 14 ~ 46%
+		// lvl 15 ~ 50%
 		int level = Math.max( 0, weapon.effectiveLevel() );
 		
 		if (Random.Int( level + 100 ) >= 92) {
