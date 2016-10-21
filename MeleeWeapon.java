@@ -173,7 +173,7 @@ public class MeleeWeapon extends Weapon {
 	public int price() {
 		int price = 20 * (1 << (tier - 1));
 		if (enchantment != null) {
-			price *= 1.5;
+			price *= 2;
 		}
 		return considerState( price );
 	}
