@@ -23,7 +23,7 @@ public class Ankh extends Item {
 
 	{
 		stackable = true;
-		name = "Ankh";
+		name = "talisman of life";
 		image = ItemSpriteSheet.ANKH;
 	}
 	
@@ -40,7 +40,7 @@ public class Ankh extends Item {
 	@Override
 	public String info() {
 		return 
-			"The ancient symbol of immortality grants an ability to return to life after death. " +
+			"The ancient symbol of life grants an ability to escape the world of the dead upon death. " +
 			"Upon resurrection all non-equipped items are lost.";
 	}
 	
