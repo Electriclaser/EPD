@@ -29,20 +29,20 @@ public class Crab extends Mob {
 		name = "sewer crab";
 		spriteClass = CrabSprite.class;
 		
-		HP = HT = 15;
+		HP = HT = 14;
 		defenseSkill = 5;
-		baseSpeed = 2f;
+		baseSpeed = 1.7f;
 		
 		EXP = 3;
 		maxLvl = 9;
 		
 		loot = new MysteryMeat();
-		lootChance = 0.167f;
+		lootChance = 0.3f;
 	}
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 3, 6 );
+		return Random.NormalIntRange( 2, 6 );
 	}
 	
 	@Override
@@ -69,8 +69,8 @@ public class Crab extends Mob {
 	@Override
 	public String description() {
 		return
-			"These huge crabs are at the top of the food chain in the sewers. " +
-			"They are extremely fast and their thick exoskeleton can withstand " +
+			"These huge crabs are almost at the top of the food chain in the sewers. " +
+			"They are unnaturally fast and their thick exoskeleton can withstand " +
 			"heavy blows.";
 	}
 }
